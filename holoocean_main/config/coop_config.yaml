@@ -150,7 +150,7 @@
 /controller_node:
   ros_parameters:
     torpedo_fin: 3
-    vehicle_name: auv0
+    vehicle_name: sv
 
 /command_node:
   ros_parameters:
