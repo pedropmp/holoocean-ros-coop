@@ -9,3 +9,6 @@ log/
 !*.json
 *.tar
 *.zip
+
+**/__pycache__/
+*.pyc
