@@ -111,7 +111,7 @@ class HolooceanInterface():
                     if sensor_type in multi_publisher_sensors:
                         for suffix in multi_publisher_sensors[sensor_type]:
                             full_type = f"{sensor['sensor_type']}{suffix}"
-                            full_name = f"{sensor['sensor_name']}{suffix}"
+                            full_name = f"{agent['agent_name']}/{sensor['sensor_name']}{suffix}"
                             
                             encoder_class = encoders.get(full_type)
                             sensor_copy = sensor.copy()  # Create a copy of the sensor dictionary
@@ -119,12 +119,17 @@ class HolooceanInterface():
                             sensor_copy['agent_name'] = agent['agent_name']
                             sensor_copy['state_name'] = sensor['sensor_name']  # Need the name to pull the data out of the state
                             sensors.append(encoder_class(sensor_copy))
+
                     else:
+                        full_name = f"{agent['agent_name']}/{sensor['sensor_name']}"
+
                         sensor_copy = sensor.copy()  # Create a copy of the sensor dictionary
+                        sensor_copy['sensor_name'] = full_name
                         sensor_copy['agent_name'] = agent['agent_name']
                         sensor_copy['state_name'] = sensor['sensor_name']  # Need the name to pull the data out of the state
                         encoder = encoders[sensor['sensor_type']]
                         sensors.append(encoder(sensor_copy))
+                    print(f'aqui {sensor_copy}')
         
         return sensors
 

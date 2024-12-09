@@ -4,6 +4,7 @@ from holoocean.dynamics import *
 
 import rclpy
 from rclpy.node import Node
+from rclpy.publisher import Publisher
 
 from std_msgs.msg import Header, Float64
 
