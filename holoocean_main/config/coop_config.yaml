@@ -17,11 +17,6 @@
           rotation: [0, 0, 0]
           publish_commands: true
           sensors:
-            - sensor_type: DynamicsSensor
-              configuration:
-                UseCOM: true
-                UseRPY: false
-              ros_publish: true
             - sensor_type: IMUSensor
               ros_publish: true
               tick_every: 3
@@ -83,11 +78,6 @@
           rotation: [0, 0, 0]
           publish_commands: true
           sensors:
-            - sensor_type: DynamicsSensor
-              configuration:
-                UseCOM: true
-                UseRPY: false
-              ros_publish: true
             - sensor_type: IMUSensor
               ros_publish: true
               tick_every: 3

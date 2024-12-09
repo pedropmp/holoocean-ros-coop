@@ -13,15 +13,6 @@
         "agent_type": "SurfaceVessel",
         "sensors": [
             {
-                "sensor_type": "DynamicsSensor",
-                "configuration": {
-                    "UseCOM": true,
-                    "UseRPY": false 
-                },
-                "ros_publish": true
-
-            },
-            {
                 "sensor_type": "IMUSensor",
                 "ros_publish": true,
                 "socket": "COM",
@@ -104,15 +95,6 @@
             "agent_name": "uav",
             "agent_type": "UavAgent",
             "sensors": [
-                {
-                    "sensor_type": "DynamicsSensor",
-                    "configuration": {
-                        "UseCOM": true,
-                        "UseRPY": false 
-                    },
-                    "ros_publish": true
-    
-                },
                 {
                     "sensor_type": "IMUSensor",
                     "ros_publish": true,
