@@ -58,11 +58,22 @@ def generate_launch_description():
         parameters=[{'params_file': str(params_file)}],  # Pass parameters in the correct format
     )
 
+    imu_node = launch_ros.actions.Node(
+        name='imu_node',
+        package='holoocean_main',
+        executable='imu_node',
+        namespace=holoocean_namespace,
+        output='screen',
+        emulate_tty=True,
+        parameters=[{'params_file': str(params_file)}],  # Pass parameters in the correct format
+    )
+
 
     return LaunchDescription([
         holoocean_main_node,
         # command_node,
         # state_est_node,
-        # rosbag                            
+        # rosbag,
+        imu_node                            
     ])
 

@@ -32,7 +32,8 @@ setup(
             'command_node = holoocean_main.command_node:main',
             'fins_node = holoocean_main.fins_node:main',
             'controller_node = holoocean_main.controller_node:main',
-            'coop_node = holoocean_main.coop_node:main'
+            'coop_node = holoocean_main.coop_node:main',
+            'imu_node = holoocean_main.imu_node:main'
         ],
     },
 )
