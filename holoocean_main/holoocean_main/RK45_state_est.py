@@ -47,7 +47,7 @@ class RKStateEstimate(Node):
         self.last_time = None
         self.initial_state = False
 
-    def vel_callback(self, msg):
+    def vel_callback(self, msg:TwistWithCovarianceStamped):
         current_time = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
         if self.last_time is None:
             self.last_time = current_time
@@ -76,7 +76,7 @@ class RKStateEstimate(Node):
 
         self.last_time = current_time
 
-    def rotation_callback(self, msg):
+    def rotation_callback(self, msg:Vector3Stamped):
         # Convert the incoming vector to roll, pitch, yaw (RPY) using 'xyz' convention
         RPY = Rotation.from_euler('xyz', [msg.vector.x, msg.vector.y, msg.vector.z], degrees=True).as_euler('zyx', degrees=True)
 
@@ -96,7 +96,7 @@ class RKStateEstimate(Node):
         self.yaw = (self.yaw + 180) % 360 - 180
         self.initial_state = True
 
-    def depth_callback(self, msg):
+    def depth_callback(self, msg:PoseWithCovarianceStamped):
         self.depth = msg.pose.pose.position.z
 
     def timer_callback(self):
