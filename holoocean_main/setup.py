@@ -6,7 +6,7 @@ package_name = 'holoocean_main'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='0.0.1',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -30,6 +30,7 @@ setup(
             'torpedo_node = holoocean_main.torpedo_node:main',
             'state_estimate = holoocean_main.RK45_state_est:main',
             'command_node = holoocean_main.command_node:main',
+            'command_coop_node = holoocean_main.command_coop_node:main',
             'fins_node = holoocean_main.fins_node:main',
             'controller_node = holoocean_main.controller_node:main',
             'coop_node = holoocean_main.coop_node:main',
