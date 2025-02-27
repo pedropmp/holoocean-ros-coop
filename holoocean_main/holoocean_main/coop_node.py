@@ -6,7 +6,8 @@ import rclpy
 from rclpy.node import Node
 from rclpy.publisher import Publisher
 
-from std_msgs.msg import Header, Float64
+from geometry_msgs.msg import Point
+from holoocean_interfaces.msg import UAVCommand
 
 
 class CoopNode(Node):
@@ -24,23 +25,22 @@ class CoopNode(Node):
         self.timer = self.create_timer(self.interface.get_time_warp_period(), self.tick_callback)
         self.get_logger().info('Tick Started')
 
-        self.accel = np.array(np.zeros(6),float)
+        self.sv_command = np.array(np.zeros(2),float)
+        self.uav_command = np.array(np.zeros(4),float)
         
         ######## CUSTOM SUBSCRIBERS ############
         
-        # Heading in degrees (-180, 180) centered at NORTH?? 
-        self.heading_sub = self.create_subscription(
-            Float64,
-            'heading',
-            self.heading_callback,
+        self.sv_sub = self.create_subscription(
+            Point,
+            'sv_position_ref',
+            self.sv_callback,
             10
         )
 
-        # Speed (surge) in x body frame (forward, m/s)
-        self.speed_sub = self.create_subscription(
-            Float64,
-            'speed',
-            self.speed_callback,
+        self.uav_sub = self.create_subscription(
+            UAVCommand,
+            'uav_position_ref',
+            self.uav_callback,
             10
         )
 
@@ -53,13 +53,15 @@ class CoopNode(Node):
    
     def tick_callback(self):
         #Tick the envionment and publish data as many times as requested
-        state = self.interface.tick(self.accel)
+        commands = {'sv': self.sv_command, 'uav': self.uav_command}
+        state = self.interface.tick(commands)
         self.interface.publish_sensor_data(state)
 
-    def heading_callback(self,msg):
-        pass
-    def speed_callback(self, msg):
-        pass
+    def sv_callback(self, msg: Point):
+        self.sv_command = np.array([msg.x, msg.y])
+
+    def uav_callback(self, msg: UAVCommand):
+        self.uav_command = np.array(msg.orientation+[msg.altitude])
 
     def create_publishers(self):
         for sensor in self.interface.sensors:

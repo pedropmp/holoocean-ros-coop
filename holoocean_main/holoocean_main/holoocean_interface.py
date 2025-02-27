@@ -6,6 +6,8 @@ import json
 import yaml
 from holoocean_main.sensor_data_encode import encoders, multi_publisher_sensors
 
+from typing import Dict
+
 #TODO: Maybe add sensor data encode to this file
 
 class HolooceanInterface():
@@ -157,12 +159,17 @@ class HolooceanInterface():
                 # Handle other exceptions
                 print(f"Error processing sensor: {sensor.name}, type: {sensor.type}, error: {str(e)}")
 
-    def tick(self, command):
+    def tick(self, command: Dict):
         """
         Step the holoocean enviornment and the vehicle dynamics 
         Return the state
         """
-        state = self.env.step(command) #To publish data to ros correctly, we should only tick the enviornment once each step
+        if self.multi_agent_scenario:
+            state = self.env.step(command[0]) #To publish data to ros correctly, we should only tick the enviornment once each step
+        else:
+            for vehicle_name, command in command.items():
+                self.env.act(vehicle_name, command)                
+            state = self.env.tick()
 
         return state
     

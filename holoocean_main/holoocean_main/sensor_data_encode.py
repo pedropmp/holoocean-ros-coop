@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from sensor_msgs.msg import Imu
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Vector3Stamped, PoseWithCovarianceStamped, TwistWithCovarianceStamped
-from holoocean_interfaces.msg import DVLSensorRange, UCommand
+from geometry_msgs.msg import Vector3Stamped, PoseWithCovarianceStamped, TwistWithCovarianceStamped, Point
+from holoocean_interfaces.msg import DVLSensorRange, UCommand, UAVCommand
 import numpy as np
 
 
@@ -372,6 +372,50 @@ class CommandEncoder(SensorPublisher):
         msg.thruster = int(sensor_data[-1])
 
         return msg
+    
+class UAVCommandEncoder(SensorPublisher):
+    def __init__(self, sensor_dict):
+        super().__init__(sensor_dict)
+
+        self.message_type = UAVCommand
+        self.fin = [360.0] * 4
+
+
+    def encode(self, sensor_data):
+        msg = self.message_type()
+        msg.fin = self.fin
+
+        #Control commands should be in a list with fins first and thruster last value in list (max 4 fins)
+        fin_count = len(sensor_data) - 1
+
+        for i in range(fin_count):
+            msg.fin[i] = float(sensor_data[i])
+        
+        msg.thruster = int(sensor_data[-1])
+
+        return msg
+
+class SVCommandEncoder(SensorPublisher):
+    def __init__(self, sensor_dict):
+        super().__init__(sensor_dict)
+
+        self.message_type = UCommand
+        self.fin = [360.0] * 4
+
+
+    def encode(self, sensor_data):
+        msg = self.message_type()
+        msg.fin = self.fin
+
+        #Control commands should be in a list with fins first and thruster last value in list (max 4 fins)
+        fin_count = len(sensor_data) - 1
+
+        for i in range(fin_count):
+            msg.fin[i] = float(sensor_data[i])
+        
+        msg.thruster = int(sensor_data[-1])
+
+        return msg
 
 # Define other encoders similarly...
 
@@ -388,5 +432,7 @@ encoders = {
     'DynamicsSensorIMU': DynamicsIMUEncoder,
     'GPSSensor': GPSEncoder,
     'ControlCommand': CommandEncoder,
+    'UAVCommand': UAVCommandEncoder,
+    'SVCommand': SVCommandEncoder,
     # Add other sensor type encoders here...
 }
