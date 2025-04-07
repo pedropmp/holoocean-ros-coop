@@ -165,11 +165,11 @@ class HolooceanInterface():
         Return the state
         """
         if self.multi_agent_scenario:
-            state = self.env.step(command[0]) #To publish data to ros correctly, we should only tick the enviornment once each step
-        else:
             for vehicle_name, command in command.items():
                 self.env.act(vehicle_name, command)                
             state = self.env.tick()
+        else:
+            state = self.env.step(command[0]) #To publish data to ros correctly, we should only tick the enviornment once each step
 
         return state
     
