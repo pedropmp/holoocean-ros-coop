@@ -40,8 +40,8 @@ class CommandExample(Node):
         self.uav_command_publisher.publish(uav_command)
 
         sv_command = Point()
-        sv_command.x = 0
-        sv_command.y = 0
+        sv_command.x = .0
+        sv_command.y = .0
         self.sv_command_publisher.publish(sv_command)
 
 
