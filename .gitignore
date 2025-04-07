@@ -12,3 +12,5 @@ log/
 
 **/__pycache__/
 *.pyc
+
+holoocean_main.egg-info/
