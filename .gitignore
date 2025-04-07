@@ -14,3 +14,4 @@ log/
 *.pyc
 
 holoocean_main.egg-info/
+.vscode/
