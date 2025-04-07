@@ -38,9 +38,9 @@ def generate_launch_description():
 
     # Define the command node
     command_node = launch_ros.actions.Node(
-        name='command_node',
+        name='command_coop_node',
         package='holoocean_main',
-        executable='command_node',  # Assuming the executable is command_node.py
+        executable='command_coop_node',  # Assuming the executable is command_node.py
         namespace=holoocean_namespace,
         output='screen',
         emulate_tty=True,
@@ -71,7 +71,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         holoocean_main_node,
-        # command_node,
+        command_node,
         # state_est_node,
         # rosbag,
         imu_node                            
