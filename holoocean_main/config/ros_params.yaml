@@ -7,3 +7,10 @@
   ros__parameters:
     random: false
     deep: true
+
+/command_coop_node:
+  ros__parameters:
+    random: false
+    deep: true
+    uav_command_topic: uav_command
+    sv_command_topic: sv_command

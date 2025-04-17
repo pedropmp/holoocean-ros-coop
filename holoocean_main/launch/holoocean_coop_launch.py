@@ -18,6 +18,8 @@ def generate_launch_description():
     base = Path(get_package_share_directory('holoocean_main'))
     params_file = base / 'config' / 'coop_config.yaml'
 
+    ros_params_file = os.path.join(base, 'config', 'ros_params.yaml')
+    
     log_dir = os.path.join(os.getenv('HOME'), 'ros2_ws', 'log')
     # List contents of the directory to debug
     
@@ -30,7 +32,7 @@ def generate_launch_description():
         namespace=holoocean_namespace,
         output='screen',
         emulate_tty=True,
-        parameters=[{'params_file': str(params_file)}],  # Pass parameters in the correct format
+        parameters=[{'params_file': str(params_file), 'ros_params': str(ros_params_file)}],  # Pass parameters in the correct format
         remappings=[
                 ('/holoocean/ControlCommand', '/control_command'),
             ]    
@@ -44,7 +46,7 @@ def generate_launch_description():
         namespace=holoocean_namespace,
         output='screen',
         emulate_tty=True,
-        parameters=[{'params_file': str(params_file)}]  # Pass parameters in the correct format
+        parameters=[{'params_file': str(params_file), 'ros_params': str(ros_params_file)}]  # Pass parameters in the correct format
     )
 
     # Define the command node

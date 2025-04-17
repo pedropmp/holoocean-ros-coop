@@ -5,16 +5,27 @@ from holoocean.dynamics import *
 import rclpy
 from rclpy.node import Node
 from rclpy.publisher import Publisher
+from rclpy.parameter import Parameter
 
 from geometry_msgs.msg import Point
 from holoocean_interfaces.msg import UAVCommand
 
+import yaml
+import os
 
 class CoopNode(Node):
     
     def __init__(self):
         super().__init__('coop_node')
         
+        self.declare_parameter('ros_params', '')
+        ros_params_file_path = self.get_parameter('ros_params').get_parameter_value().string_value
+        self.load_yaml_parameters(ros_params_file_path)
+
+        # self._parameters: {'name': Parameter(value, type)}
+        uav_command_topic = self._parameters['uav_command_topic'].value
+        sv_command_topic =  self._parameters['sv_command_topic'].value
+
         ######## START HOLOOCEAN INTERFACE ###########
         self.declare_parameter('params_file', '')
         file_path = self.get_parameter('params_file').get_parameter_value().string_value
@@ -32,14 +43,14 @@ class CoopNode(Node):
         
         self.sv_sub = self.create_subscription(
             Point,
-            'sv_position_ref',
+            uav_command_topic,
             self.sv_callback,
             10
         )
 
         self.uav_sub = self.create_subscription(
             UAVCommand,
-            'uav_position_ref',
+            sv_command_topic,
             self.uav_callback,
             10
         )
@@ -66,6 +77,55 @@ class CoopNode(Node):
     def create_publishers(self):
         for sensor in self.interface.sensors:
             sensor.publisher = self.create_publisher(sensor.message_type, sensor.name, 10)
+
+    def load_yaml_parameters(self, file_path):
+        """Load parameters from YAML file"""
+        try:
+            # Expande caminhos com ~ para home directory
+            expanded_path = os.path.expanduser(file_path)
+            
+            with open(expanded_path, 'r') as f:
+                params_dict = yaml.safe_load(f) or {}
+                
+            # Verifica estrutura ROS 2 padrão (namespace -> ros__parameters)
+            for namespace, params in params_dict.items():
+                if 'command_coop_node' in namespace and 'ros__parameters' in params:
+                    params_to_load = params['ros__parameters']
+                else:
+                    continue
+                
+                for param_name, param_value in params_to_load.items():
+                    full_name = f'{param_name}' if namespace != '' else param_name
+                    self.set_parameter(full_name, param_value)
+                    
+            self.get_logger().info(f'Parameters loaded from: {expanded_path}')
+        except FileNotFoundError:
+            self.get_logger().error(f'Configuration file not found: {file_path}')
+        except yaml.YAMLError as e:
+            self.get_logger().error(f'YAML parsing error in {file_path}: {str(e)}')
+        except Exception as e:
+            self.get_logger().error(f'Error loading parameters from {file_path}: {str(e)}')
+
+    def set_parameter(self, name, value):
+        """Declara e define um parâmetro com tratamento de tipos"""
+        try:
+            # Verifica se o parâmetro já foi declarado
+            if not self.has_parameter(name):
+                self.declare_parameter(name, value)
+            
+            # Converte o valor para o tipo correto do ROS 2
+            param = Parameter(name, value=value)
+            self.set_parameters([param])
+            
+        except Exception as e:
+            self.get_logger().warn(f'Falha ao definir parâmetro {name}: {str(e)}')
+
+    def log_parameters(self):
+        """Registra todos os parâmetros carregados"""
+        params = self._parameters
+        self.get_logger().info("Parâmetros atuais:")
+        for name, param in params.items():
+            self.get_logger().info(f"  {name}: {param.value} (type: {type(param.value).__name__})")
 
 def main(args=None):
     rclpy.init(args=args)
